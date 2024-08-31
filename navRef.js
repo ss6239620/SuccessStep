@@ -5,7 +5,7 @@ export const navigationRef = React.createRef();
 
 export function navigate(name, params) {
   if (navigationRef.current) {
-    console.log(name);
+    // console.log(name);
     // Perform navigation if the app has mounted
     navigationRef.current.navigate(name, params);
   } else {

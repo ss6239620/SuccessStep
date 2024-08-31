@@ -1,13 +1,15 @@
 const colorTheme = {
     lightappBackGroundColor: "white",
     darkappBackGroundColor: "black",
-    primaryColor: "#407CE2",
-    secondaryColor: "#dcf0f7",
-    accentColor: "#FFC107",
+    primaryColor: "#8932EB",
+    secondaryColor: "#F48D3B",
+    accentColor: "#0F172A",
     // backgroundColor: "#FFFFFF",
     textColor: "#333333",
     borderColor: "#d3d2d6",
-    iconBackGroundColor: "#F5FAFF",
+    darkBorderColor: "#c8c7c9",
+    iconLightBackGroundColor: "black",
+    iconDarkBackGroundColor: "black",
     iconWithBlueBackGround: "#5c9cf7",
     appcommonfont:'Quicksand-VariableFont_wght'
 }

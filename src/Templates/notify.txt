@@ -1,0 +1,163 @@
+import { StyleSheet, Text, View ,Alert,Button} from 'react-native'
+import React, { useEffect, useState } from 'react'
+import messaging from '@react-native-firebase/messaging'
+import notifee from '@notifee/react-native';
+
+
+export default function Login() {
+  const [notificationData, setnotificationData] = useState({})
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      setnotificationData(remoteMessage)
+      console.log(remoteMessage);
+    });
+    return unsubscribe;
+  }, []);
+
+  async function onDisplayNotification() {
+    // Request permissions (required for iOS)
+    await notifee.requestPermission()
+
+    // Create a channel (required for Android)
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default Channel',
+    });
+
+    // Display a notification
+    await notifee.displayNotification({
+      title: 'Notification Title',
+      body: 'Main body content of the notification',
+      android: {
+        channelId,
+        smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
+        // pressAction is needed if you want the notification to open the app when pressed
+        pressAction: {
+          id: 'default',
+        },
+      },
+    });
+  }
+
+  return (
+    <View>
+      <Text>Login</Text>
+      <Button title="Display Notification" onPress={() => onDisplayNotification()} />
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({})
+
+
+goggle signin
+
+import { StyleSheet, Text, View, StatusBar, useColorScheme, Button,Alert } from 'react-native'
+import React, { useEffect } from 'react'
+import { colorTheme } from '../../constant';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth'
+import messaging from '@react-native-firebase/messaging'
+
+
+export default function GetStarted() {
+    useEffect(() => {
+        GoogleSignin.configure({
+            webClientId: '720467736730-lha8a2oqh6a5ftfaumucrqo52i1v93h3.apps.googleusercontent.com',
+        });
+    }, [])
+
+    useEffect(() => {
+        getmydevicetoken()
+    }, [])
+
+    async function getmydevicetoken(params) {
+        let token = await messaging().getToken()
+        console.log(token);
+    }
+
+    useEffect(() => {
+        const unsubscribe = messaging().onMessage(async remoteMessage => {
+          Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+        });
+    
+        return unsubscribe;
+      }, []);
+
+
+    async function onGoogleButtonPress() {
+        // Check if your device supports Google Play
+        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+        // Get the users ID token
+        console.log('here');
+        const { idToken, user } = await GoogleSignin.signIn();
+        console.log(user);
+
+        // Create a Google credential with the token
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+        // Sign-in the user with the credential
+        return auth().signInWithCredential(googleCredential);
+    }
+
+    const colorScheme = useColorScheme()
+    const styles = colorScheme === 'dark' ? darkStyles : lightStyles;
+    return (
+        <View style={styles.container}>
+            {colorScheme === 'light' ?
+                <StatusBar
+                    barStyle={'dark-content'}
+                    backgroundColor={colorTheme.lightappBackGroundColor}
+                /> :
+                <StatusBar
+                    barStyle={'light-content'}
+                    backgroundColor={colorTheme.darkappBackGroundColor}
+                />
+            }
+            <Text style={styles.allText}>hshshsh</Text>
+            <Button title='google-sign-in' onPress={onGoogleButtonPress} />
+        </View>
+    )
+}
+
+const lightStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: colorTheme.lightappBackGroundColor,
+        paddingTop: 5,
+        paddingHorizontal: 10
+    },
+    allText: {
+        color: 'black',
+        fontFamily: colorTheme.appcommonfont
+    }
+})
+
+const darkStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: colorTheme.darkappBackGroundColor,
+        paddingTop: 5,
+        paddingHorizontal: 10
+    },
+    allText: {
+        color: 'white',
+        fontFamily: colorTheme.appcommonfont
+    }
+})
+
+
+signout
+async function signOut() {
+  try {
+    await auth().signOut();
+    await GoogleSignin.signOut();
+    await AsyncStorage.removeItem('@user'); // Remove user data from AsyncStorage
+    setUser(null); // Reset user state
+    navigation.navigate('Login'); // Navigate back to login screen
+  } catch (error) {
+    console.error(error);
+  }
+}
